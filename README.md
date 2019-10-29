@@ -13,8 +13,10 @@ Based on Firebase
 ## test
 
     cd rules
+    firebase serve --only functions,firestore
     yarn test
 
 ## resources
-https://firebase.google.com/docs
-https://angularfirebase.com/lessons/testing-firestore-security-rules-with-the-emulator/
+
+* https://firebase.google.com/docs
+* https://angularfirebase.com/lessons/testing-firestore-security-rules-with-the-emulator/
