@@ -4,17 +4,24 @@ const _ = require('lodash')
 module.exports = functions.firestore
   .document('trips/{tripId}').onWrite((change, context) => {
     console.log(change.after.data());
-    if (change.before.data().from !== change.after.data().from
-      || change.before.data().to !== change.after.data().to)
-      return change.after.ref.set({
-        filters: _.uniq(_.flatten(_.map(
-          [change.after.data().from, change.after.data().to] ,
-            el => _.reduce(
-              _.tail(el.split('')),
-              (acc, val) => { acc.push(acc[acc.length-1] + val); return acc },
-              [el.split('')[0]]
-            )
-        )))
-      }, {merge: true});
-    return null;
+    let changes = {};
+    if (change.before.data().from !== change.after.data().from)
+      changes.from_filters = getSubstrings(change.after.data().from)
+
+    if (change.before.data().to !== change.after.data().to)
+      changes.to_filters = getSubstrings(change.after.data().to)
+
+    return change.after.ref.set(changes, {merge: true});
   });
+
+
+function getSubstrings (str) {
+  return _.reduce(
+    _.tail(str.split('')),
+    (acc, val) => {
+      acc.push(acc[acc.length - 1] + val);
+      return acc
+    },
+    [str.split('')[0]]
+  )
+}
